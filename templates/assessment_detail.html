@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Assessment Details - CounselBot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Assessment Response Details</h2>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted">Question Type</h5>
+                        <p class="h4">{{ response.question.question_type }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted">Question</h5>
+                        <p>{{ response.question.question_text }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted">Your Response</h5>
+                        <p>{{ response.response_text }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted">Date Completed</h5>
+                        <p>{{ response.created_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'recommendations' %}" class="btn btn-primary">
+                            View All Recommendations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

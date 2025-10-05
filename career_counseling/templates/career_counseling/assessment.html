@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Career Assessment</h3>
+                    <p class="mb-0">Answer these questions to discover your ideal career path</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="assessmentForm">
+                        {% csrf_token %}
+                        
+                        {% for question in questions %}
+                        <div class="question-card mb-4" data-question="{{ forloop.counter }}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Question {{ forloop.counter }} of {{ questions|length }}</h5>
+                                    <p class="card-text">{{ question.text }}</p>
+                                    
+                                    <div class="options-container">
+                                        {% for option in question.options %}
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" 
+                                                   name="question_{{ forloop.parentloop.counter }}" 
+                                                   id="q{{ forloop.parentloop.counter }}_option{{ forloop.counter }}"
+                                                   value="{{ forloop.counter0 }}" required>
+                                            <label class="form-check-label" 
+                                                   for="q{{ forloop.parentloop.counter }}_option{{ forloop.counter }}">
+                                                {{ option }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Get Career Recommendations
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.question-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.question-card.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-check {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-check:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.form-check-input:checked + .form-check-label {
+    color: #007bff;
+    font-weight: 500;
+}
+
+.form-check-input:checked ~ .form-check {
+    background-color: #e7f1ff;
+    border-color: #007bff;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-bottom: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const questions = document.querySelectorAll('.question-card');
+    let currentQuestion = 0;
+
+    // Show first question
+    questions[0].classList.add('active');
+
+    // Handle form submission
+    document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate all questions are answered
+        const unanswered = document.querySelectorAll('input[type="radio"]:not(:checked)');
+        if (unanswered.length > 0) {
+            alert('Please answer all questions before submitting.');
+            return;
+        }
+
+        // Submit the form
+        this.submit();
+    });
+
+    // Optional: Add keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' && currentQuestion < questions.length - 1) {
+            questions[currentQuestion].classList.remove('active');
+            currentQuestion++;
+            questions[currentQuestion].classList.add('active');
+        } else if (e.key === 'ArrowLeft' && currentQuestion > 0) {
+            questions[currentQuestion].classList.remove('active');
+            currentQuestion--;
+            questions[currentQuestion].classList.add('active');
+        }
+    });
+});
+</script>
+{% endblock %} 

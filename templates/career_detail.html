@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Career Details - CounselBot{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h2 class="card-title mb-2">{{ recommendation.career_path.title }}</h2>
+                            <p class="text-muted">Match Score: {{ recommendation.confidence_score|floatformat:0 }}%</p>
+                        </div>
+                        <div class="badge bg-primary p-2">
+                            <i class="fas fa-star me-1"></i>
+                            Top Match
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Description</h4>
+                        <p>{{ recommendation.career_path.description }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Required Skills</h4>
+                        <div class="row">
+                            {% for skill in recommendation.career_path.required_skills %}
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    {{ skill }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Education Requirements</h4>
+                        <ul class="list-unstyled">
+                            {% for req in recommendation.career_path.education_requirements %}
+                            <li class="mb-2">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                {{ req }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Job Outlook</h4>
+                        <p>{{ recommendation.career_path.job_outlook }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Average Salary</h4>
+                        <p class="h3 text-primary">{{ recommendation.career_path.average_salary }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4>Why This Career Matches You</h4>
+                        <p>{{ recommendation.reasoning }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- Action Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Next Steps</h4>
+                    <div class="d-grid gap-3">
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i>
+                            Find Job Openings
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-book me-2"></i>
+                            Training Resources
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-users me-2"></i>
+                            Connect with Professionals
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resources Card -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Helpful Resources</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-file-alt me-2"></i>
+                                Career Guide
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-video me-2"></i>
+                                Video Interviews
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Salary Trends
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-decoration-none">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Local Opportunities
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

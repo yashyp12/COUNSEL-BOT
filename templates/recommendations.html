@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Career Recommendations - CounselBot{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">Your Career Recommendations</h1>
+                <a href="{% url 'download_report' %}" class="btn btn-primary">
+                    <i class="fas fa-download me-2"></i>Download Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recommendations -->
+        <div class="col-lg-8">
+            {% for recommendation in recommendations %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h3 class="card-title mb-0">{{ recommendation.career_path.title }}</h3>
+                        <span class="badge bg-primary">{{ recommendation.confidence_score|floatformat:1 }}% Match</span>
+                    </div>
+                    
+                    <p class="card-text">{{ recommendation.career_path.description }}</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Required Skills</h5>
+                            <ul class="list-unstyled">
+                                {% for skill in recommendation.career_path.required_skills.technical %}
+                                <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Soft Skills</h5>
+                            <ul class="list-unstyled">
+                                {% for skill in recommendation.career_path.required_skills.soft %}
+                                <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Average Salary:</strong><br>{{ recommendation.career_path.average_salary }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Education Required:</strong><br>{{ recommendation.career_path.education_requirements.minimum }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card-text mb-3">
+                        <h5>Job Outlook</h5>
+                        <p>{{ recommendation.career_path.job_outlook }}</p>
+                    </div>
+                    
+                    <div class="card-text">
+                        <h5>Why This Career?</h5>
+                        <p>{{ recommendation.reasoning }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Analysis Sidebar -->
+        <div class="col-lg-4">
+            <!-- Skills Analysis -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Skills Analysis</h4>
+                    {% for skill, level in skill_analysis.items %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ skill }}</span>
+                            <span class="text-primary">{{ level }}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Interest Analysis -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Interest Areas</h4>
+                    {% for interest, level in interest_analysis.items %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ interest }}</span>
+                            <span class="text-primary">{{ level }}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Personality Insights -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Personality Insights</h4>
+                    {% for trait, value in personality_insights.items %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ trait }}</span>
+                            <span class="text-primary">{{ value }}%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ value }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.progress {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.progress-bar {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+</style>
+{% endblock %} 

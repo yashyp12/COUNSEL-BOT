@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Your Career Assessment Results</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Primary Recommendation -->
+                    <div class="text-center mb-5">
+                        <h4 class="mb-3">Primary Career Recommendation</h4>
+                        <div class="career-recommendation p-4 bg-light rounded">
+                            <h2 class="text-primary">{{ result.recommended_career }}</h2>
+                            <div class="progress mt-3" style="height: 25px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: {{ result.confidence_score|multiply:100 }}%"
+                                     aria-valuenow="{{ result.confidence_score|multiply:100 }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ result.confidence_score|multiply:100|floatformat:1 }}% Match
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alternative Career Paths -->
+                    <div class="mb-5">
+                        <h4 class="mb-3">Alternative Career Paths</h4>
+                        <div class="row">
+                            {% for career, prob in career_details.all_probabilities.items %}
+                                {% if career != result.recommended_career %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ career }}</h5>
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar bg-info" role="progressbar" 
+                                                         style="width: {{ prob|multiply:100 }}%"
+                                                         aria-valuenow="{{ prob|multiply:100 }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100">
+                                                        {{ prob|multiply:100|floatformat:1 }}%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Career Insights -->
+                    <div class="mb-5">
+                        <h4 class="mb-3">Career Insights</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Skills Alignment</h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                Strong problem-solving abilities
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                Technical aptitude
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                Analytical thinking
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Growth Opportunities</h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">
+                                                <i class="fas fa-arrow-up text-primary"></i>
+                                                Industry demand
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-arrow-up text-primary"></i>
+                                                Career progression
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-arrow-up text-primary"></i>
+                                                Skill development
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <a href="{% url 'career_paths' %}" class="btn btn-primary btn-lg me-3">
+                            Explore Career Paths
+                        </a>
+                        <a href="{% url 'assessment' %}" class="btn btn-outline-primary btn-lg">
+                            Retake Assessment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.career-recommendation {
+    border: 2px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.career-recommendation:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.progress {
+    background-color: #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 1s ease-in-out;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %} 

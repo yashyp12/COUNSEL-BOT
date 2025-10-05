@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="800" height="600" fill="#f8f9fa"/>
+    
+    <!-- Career Path Illustration -->
+    <g transform="translate(100, 100)">
+        <!-- Career Path Line -->
+        <path d="M0,200 Q200,100 400,200 T800,200" stroke="#007bff" stroke-width="4" fill="none"/>
+        
+        <!-- Career Steps -->
+        <g transform="translate(0, 200)">
+            <!-- Step 1 -->
+            <circle cx="0" cy="0" r="20" fill="#007bff"/>
+            <text x="0" y="5" text-anchor="middle" fill="white" font-size="16">1</text>
+            
+            <!-- Step 2 -->
+            <circle cx="200" cy="0" r="20" fill="#007bff"/>
+            <text x="200" y="5" text-anchor="middle" fill="white" font-size="16">2</text>
+            
+            <!-- Step 3 -->
+            <circle cx="400" cy="0" r="20" fill="#007bff"/>
+            <text x="400" y="5" text-anchor="middle" fill="white" font-size="16">3</text>
+            
+            <!-- Step 4 -->
+            <circle cx="600" cy="0" r="20" fill="#007bff"/>
+            <text x="600" y="5" text-anchor="middle" fill="white" font-size="16">4</text>
+        </g>
+        
+        <!-- Step Labels -->
+        <g transform="translate(0, 250)">
+            <text x="0" y="0" text-anchor="middle" font-size="14">Create Account</text>
+            <text x="200" y="0" text-anchor="middle" font-size="14">Take Assessment</text>
+            <text x="400" y="0" text-anchor="middle" font-size="14">AI Analysis</text>
+            <text x="600" y="0" text-anchor="middle" font-size="14">Get Results</text>
+        </g>
+    </g>
+    
+    <!-- Decorative Elements -->
+    <g transform="translate(50, 50)">
+        <!-- Brain Icon -->
+        <path d="M100,100 C120,80 140,80 160,100 C180,120 180,140 160,160 C140,180 120,180 100,160 C80,140 80,120 100,100" 
+              fill="#007bff" opacity="0.2"/>
+        
+        <!-- Chart Icon -->
+        <path d="M200,160 L220,120 L240,140 L260,100 L280,160" 
+              stroke="#007bff" stroke-width="4" fill="none" opacity="0.2"/>
+        
+        <!-- Document Icon -->
+        <rect x="300" y="100" width="40" height="60" fill="#007bff" opacity="0.2"/>
+    </g>
+</svg> 

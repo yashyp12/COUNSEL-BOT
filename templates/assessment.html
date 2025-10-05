@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Career Assessment - CounselBot{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Career Assessment</h2>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4" style="height: 10px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" id="progress-bar"></div>
+                    </div>
+                    
+                    <!-- Questions Form -->
+                    <form id="assessment-form" method="post">
+                        {% csrf_token %}
+                        {% for question in questions %}
+                        <div class="question-card mb-4" id="question-{{ forloop.counter }}" style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+                            <h4 class="mb-3">Question {{ forloop.counter }} of {{ questions|length }}</h4>
+                            <p class="mb-4">{{ question.question_text }}</p>
+                            
+                            <div class="options">
+                                {% for option in question.options %}
+                                <div class="option mb-3">
+                                    <input type="radio" 
+                                           name="question_{{ question.id }}" 
+                                           id="option_{{ forloop.counter }}_q{{ question.id }}" 
+                                           value="{{ option }}" 
+                                           class="btn-check" 
+                                           required>
+                                    <label class="btn btn-outline-primary w-100" 
+                                           for="option_{{ forloop.counter }}_q{{ question.id }}">
+                                        {{ option }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" id="prev-btn" style="display: none;">
+                                <i class="fas fa-arrow-left me-2"></i>Previous
+                            </button>
+                            <button type="button" class="btn btn-primary" id="next-btn">
+                                Next<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                            <button type="submit" class="btn btn-success" id="submit-btn" style="display: none;">
+                                <i class="fas fa-check me-2"></i>Submit Assessment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Analyzing your responses...</p>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.question-card {
+    transition: all 0.3s ease;
+}
+
+.option label {
+    transition: all 0.2s ease;
+}
+
+.option label:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-check:checked + .btn-outline-primary {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('assessment-form');
+    const questions = document.querySelectorAll('.question-card');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    
+    let currentQuestion = 0;
+    const totalQuestions = questions.length;
+    
+    function updateProgress() {
+        const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+    
+    function showQuestion(index) {
+        questions.forEach((q, i) => {
+            q.style.display = i === index ? 'block' : 'none';
+        });
+        
+        prevBtn.style.display = index === 0 ? 'none' : 'block';
+        nextBtn.style.display = index === totalQuestions - 1 ? 'none' : 'block';
+        submitBtn.style.display = index === totalQuestions - 1 ? 'block' : 'none';
+        
+        updateProgress();
+    }
+    
+    function validateCurrentQuestion() {
+        const currentQuestionCard = questions[currentQuestion];
+        const radioButtons = currentQuestionCard.querySelectorAll('input[type="radio"]');
+        const isAnswered = Array.from(radioButtons).some(radio => radio.checked);
+        
+        if (!isAnswered) {
+            showAlert('Please select an option before proceeding.', 'warning');
+            return false;
+        }
+        return true;
+    }
+    
+    nextBtn.addEventListener('click', function() {
+        if (validateCurrentQuestion()) {
+            currentQuestion++;
+            showQuestion(currentQuestion);
+        }
+    });
+    
+    prevBtn.addEventListener('click', function() {
+        currentQuestion--;
+        showQuestion(currentQuestion);
+    });
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validateCurrentQuestion()) {
+            return;
+        }
+        
+        // Show loading overlay
+        loadingOverlay.style.display = 'flex';
+        
+        // Collect all responses
+        const responses = [];
+        questions.forEach(questionCard => {
+            const radioButtons = questionCard.querySelectorAll('input[type="radio"]');
+            const selectedOption = Array.from(radioButtons).find(radio => radio.checked);
+            if (selectedOption) {
+                responses.push({
+                    question_id: selectedOption.name.split('_')[1],
+                    response: selectedOption.value
+                });
+            }
+        });
+        
+        // Submit responses
+        fetch('{% url "assessment" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ responses: responses })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showAlert('Assessment completed successfully! Redirecting to recommendations...', 'success');
+                setTimeout(() => {
+                    window.location.href = '{% url "recommendations" %}';
+                }, 2000);
+            } else {
+                showAlert(data.message || 'An error occurred. Please try again.', 'danger');
+            }
+        })
+        .catch(error => {
+            showAlert('An error occurred. Please try again.', 'danger');
+        })
+        .finally(() => {
+            loadingOverlay.style.display = 'none';
+        });
+    });
+});
+</script>
+{% endblock %} 

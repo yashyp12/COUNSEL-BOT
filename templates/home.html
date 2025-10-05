@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to CounselBot - AI Career Counseling{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="hero-title">Discover Your Perfect Career Path</h1>
+                <p class="lead text-light mb-4">Let AI guide you through a personalized career assessment and get tailored recommendations based on your skills, interests, and personality.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'assessment' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-play-circle me-2"></i>Start Assessment
+                    </a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-user me-2"></i>View Profile
+                    </a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-user-plus me-2"></i>Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'img/hero-illustration.svg' %}" alt="Career Counseling Illustration" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose CounselBot?</h2>
+            <p>Our AI-powered platform provides personalized career guidance based on your unique profile.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-robot fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">AI-Powered Analysis</h3>
+                        <p class="card-text">Advanced algorithms analyze your responses to provide accurate career recommendations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-chart-line fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">Personalized Insights</h3>
+                        <p class="card-text">Get detailed insights about your skills, interests, and personality traits.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">Career Guidance</h3>
+                        <p class="card-text">Receive comprehensive career recommendations with detailed requirements and growth opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="flow-section">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <span class="gradient-text">How It Works</span>
+        </h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <h4>Create Account</h4>
+                    <p>Sign up and complete your profile with your skills and interests.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="d-none d-lg-block col-lg-1">
+                <div class="flow-connector"></div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <h4>Take Assessment</h4>
+                    <p>Complete our AI-powered assessment to analyze your potential.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-clipboard-check fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="d-none d-lg-block col-lg-1">
+                <div class="flow-connector"></div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <h4>Get Insights</h4>
+                    <p>Receive personalized career recommendations and detailed insights.</p>
+                    <div class="step-icon">
+                        <i class="fas fa-lightbulb fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-header">
+            <h2>What Our Users Say</h2>
+            <p>Join thousands of satisfied users who have found their perfect career path with CounselBot.</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-quote-left fa-2x text-primary me-3"></i>
+                            <p class="card-text">"CounselBot helped me discover career paths I never considered. The AI analysis was incredibly accurate!"</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small class="text-secondary">Recent Graduate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-quote-left fa-2x text-primary me-3"></i>
+                            <p class="card-text">"The personalized recommendations were spot-on. It helped me make an informed decision about my career change."</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">Michael Chen</h5>
+                                <small class="text-secondary">Career Switcher</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-quote-left fa-2x text-primary me-3"></i>
+                            <p class="card-text">"The assessment process was engaging and the insights were valuable. Highly recommended!"</p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">Emma Davis</h5>
+                                <small class="text-secondary">Student</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-darker">
+    <div class="container text-center">
+        <h2 class="gradient-text mb-4">Ready to Discover Your Career Path?</h2>
+        <p class="lead mb-4">Join thousands of users who have found their perfect career match with CounselBot.</p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Get Started Now
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(108, 99, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %} 
