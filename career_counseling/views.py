@@ -10,8 +10,7 @@ from .models import (
     UserResponse,
     CareerPath,
     CareerRecommendation,
-    AssessmentReport,
-    AssessmentResult
+    AssessmentReport
 )
 from .serializers import (
     UserSerializer,

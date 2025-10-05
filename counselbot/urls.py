@@ -20,6 +20,7 @@ from career_counseling import frontend_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('career_counseling.urls')),
     path('', frontend_views.home, name='home'),
     path('profile/', frontend_views.profile, name='profile'),
     path('assessment/', frontend_views.assessment, name='assessment'),
