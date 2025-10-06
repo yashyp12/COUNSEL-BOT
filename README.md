@@ -47,6 +47,9 @@ git clone https://github.com/yourusername/counsel-bot.git
 cd counsel-bot
 ```
 
+use this version for better compatibility
+Python 3.11.9
+
 2. Create and activate a virtual environment:
 ```bash
 python3 -m venv venv
