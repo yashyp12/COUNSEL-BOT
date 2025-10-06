@@ -25,6 +25,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
+    <!-- Theme script (load early to prevent flash) -->
+    <script src="{% static 'js/theme.js' %}"></script>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -72,6 +75,11 @@
                             </a>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <button class="theme-toggle nav-link" id="theme-toggle" aria-label="Toggle theme">
+                            <i class="fas fa-moon" id="theme-icon"></i>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>

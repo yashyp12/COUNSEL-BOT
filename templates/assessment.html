@@ -75,6 +75,18 @@
 <style>
 .question-card {
     transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .option label {
@@ -83,14 +95,14 @@
 
 .option label:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(108, 99, 255, 0.2);
 }
 
 .btn-check:checked + .btn-outline-primary {
     background-color: var(--primary-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(108, 99, 255, 0.3);
 }
 
 .loading-overlay {
@@ -99,13 +111,43 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.85);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     color: white;
+}
+
+.loading-overlay .spinner-border {
+    width: 4rem;
+    height: 4rem;
+    border-width: 0.4rem;
+}
+
+.progress {
+    background-color: rgba(108, 99, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    transition: width 0.5s ease;
+}
+
+[data-theme="light"] .progress {
+    background-color: rgba(108, 99, 255, 0.1);
+}
+
+[data-theme="light"] .loading-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .option label:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
 {% endblock %}
@@ -139,6 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.style.display = index === totalQuestions - 1 ? 'block' : 'none';
         
         updateProgress();
+        
+        // Smooth scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
     function validateCurrentQuestion() {
@@ -151,6 +196,31 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         return true;
+    }
+    
+    function showAlert(message, type) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        
+        const container = document.querySelector('.container');
+        const existingAlert = container.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        container.insertAdjacentHTML('afterbegin', alertHtml);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(function() {
+            const alert = container.querySelector('.alert');
+            if (alert) {
+                alert.remove();
+            }
+        }, 5000);
     }
     
     nextBtn.addEventListener('click', function() {
@@ -172,8 +242,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Disable submit button to prevent double submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+        
         // Show loading overlay
-        loadingOverlay.style.display = 'flex';
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'flex';
+        }
         
         // Collect all responses
         const responses = [];
@@ -206,15 +282,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 2000);
             } else {
                 showAlert(data.message || 'An error occurred. Please try again.', 'danger');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Assessment';
             }
         })
         .catch(error => {
-            showAlert('An error occurred. Please try again.', 'danger');
+            console.error('Error:', error);
+            showAlert('An error occurred while submitting your assessment. Please try again.', 'danger');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Submit Assessment';
         })
         .finally(() => {
-            loadingOverlay.style.display = 'none';
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
         });
     });
+    
+    // Initialize first question
+    showQuestion(currentQuestion);
 });
 </script>
 {% endblock %} 
