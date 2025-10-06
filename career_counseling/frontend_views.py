@@ -347,12 +347,17 @@ def recommendations(request):
     # Get the latest assessment report
     report = AssessmentReport.objects.filter(user=request.user).order_by('-created_at').first()
     
+    # Ensure we have data to display
+    skill_analysis = report.skill_analysis if report and report.skill_analysis else {}
+    interest_analysis = report.interest_analysis if report and report.interest_analysis else {}
+    personality_insights = report.personality_insights if report and report.personality_insights else {}
+    
     context = {
-        'recommendations': recommendations,
+        'recommendations': recommendations[:10],  # Limit to top 10 recommendations
         'report': report,
-        'skill_analysis': report.skill_analysis if report else {},
-        'interest_analysis': report.interest_analysis if report else {},
-        'personality_insights': report.personality_insights if report else {}
+        'skill_analysis': skill_analysis,
+        'interest_analysis': interest_analysis,
+        'personality_insights': personality_insights
     }
     return render(request, 'recommendations.html', context)
 
