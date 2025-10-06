@@ -99,6 +99,50 @@
 </div>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+[data-theme="light"] .form-check-input {
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .modal-content {
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .modal-header,
+[data-theme="light"] .modal-footer {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.form-text {
+    color: var(--text-secondary);
+}
+</style>
+{% endblock %}
+
 {% block extra_js %}
 <script>
     $(document).ready(function() {

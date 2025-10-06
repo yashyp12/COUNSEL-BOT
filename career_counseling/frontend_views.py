@@ -351,11 +351,15 @@ def download_report(request):
     # Get the latest assessment report
     report = AssessmentReport.objects.filter(user=request.user).order_by('-created_at').first()
     if not report:
-        messages.warning(request, 'No assessment report found.')
+        messages.warning(request, 'No assessment report found. Please complete an assessment first.')
         return redirect('assessment')
     
     # Get career recommendations
     recommendations = CareerRecommendation.objects.filter(user=request.user).order_by('-confidence_score')
+    
+    if not recommendations.exists():
+        messages.warning(request, 'No career recommendations found. Please complete an assessment first.')
+        return redirect('assessment')
     
     # Prepare context for PDF
     context = {
@@ -367,24 +371,29 @@ def download_report(request):
         'personality_insights': report.personality_insights
     }
     
-    # Render the PDF template
-    html_string = render_to_string('pdf/assessment_report.html', context)
-    
-    # Configure PDF options
-    options = {
-        'page-size': 'Letter',
-        'encoding': 'UTF-8',
-        'custom-header': [
-            ('Accept-Encoding', 'gzip')
-        ],
-        'no-outline': None
-    }
-    
-    # Create PDF
-    pdf = pdfkit.from_string(html_string, False, options=options)
-    
-    # Create response
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="career_assessment_report.pdf"'
-    
-    return response 
+    try:
+        # Render the PDF template
+        html_string = render_to_string('pdf/assessment_report.html', context)
+        
+        # Configure PDF options
+        options = {
+            'page-size': 'Letter',
+            'encoding': 'UTF-8',
+            'custom-header': [
+                ('Accept-Encoding', 'gzip')
+            ],
+            'no-outline': None,
+            'quiet': ''
+        }
+        
+        # Create PDF
+        pdf = pdfkit.from_string(html_string, False, options=options)
+        
+        # Create response
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="career_assessment_report.pdf"'
+        
+        return response
+    except Exception as e:
+        messages.error(request, f'Error generating PDF report: {str(e)}. Please ensure wkhtmltopdf is installed.')
+        return redirect('recommendations') 
