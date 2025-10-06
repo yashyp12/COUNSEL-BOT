@@ -10,7 +10,8 @@ echo "========================================="
 echo ""
 
 # Activate virtual environment
-source venv/bin/activate
+source venv/Scripts/activate
+
 
 # Color codes for output
 GREEN='\033[0;32m'
