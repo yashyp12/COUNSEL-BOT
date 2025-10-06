@@ -331,19 +331,70 @@
 
 {% block extra_js %}
 <script>
+function showAlert(message, type) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.container');
+    const existingAlert = container.querySelector('.alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+    
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(function() {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
 function submitProfileForm() {
     const form = $('#profile-form');
+    const formData = new FormData(form[0]);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    
+    // Get user's profile ID first, then update
     $.ajax({
         url: '/api/profiles/',
-        method: 'PUT',
-        data: form.serialize(),
-        success: function(response) {
-            showAlert('Profile updated successfully!', 'success');
-            $('#editProfileModal').modal('hide');
-            setTimeout(() => location.reload(), 1500);
+        method: 'GET',
+        success: function(profiles) {
+            if (profiles && profiles.length > 0) {
+                const profileId = profiles[0].id;
+                
+                // Now update the profile
+                $.ajax({
+                    url: `/api/profiles/${profileId}/`,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        showAlert('Profile updated successfully!', 'success');
+                        $('#editProfileModal').modal('hide');
+                        setTimeout(() => location.reload(), 1500);
+                    },
+                    error: function(xhr) {
+                        showAlert('Error updating profile. Please try again.', 'danger');
+                        console.error('Profile update error:', xhr.responseText);
+                    }
+                });
+            } else {
+                showAlert('Profile not found. Please try again.', 'danger');
+            }
         },
         error: function(xhr) {
-            showAlert('Error updating profile. Please try again.', 'danger');
+            showAlert('Error fetching profile. Please try again.', 'danger');
+            console.error('Profile fetch error:', xhr.responseText);
         }
     });
 }
