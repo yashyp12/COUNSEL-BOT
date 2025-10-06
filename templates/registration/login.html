@@ -71,3 +71,29 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_css %}
+<style>
+.card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .btn-outline-dark {
+    border-color: rgba(0, 0, 0, 0.2);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .btn-outline-dark:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+.form-text {
+    color: var(--text-secondary);
+}
+</style>
+{% endblock %}
