@@ -112,25 +112,29 @@
                     
                     <div class="mb-3">
                         <label class="text-muted d-block">Email</label>
-                        <p class="mb-0">{{ user.email }}</p>
+                        <p class="mb-0">{{ user.email|default:"Not provided" }}</p>
                     </div>
                     
                     <div class="mb-3">
                         <label class="text-muted d-block">Education Level</label>
-                        <p class="mb-0">{{ user.userprofile.education_level }}</p>
+                        <p class="mb-0">{{ profile.education_level|default:"Not provided" }}</p>
                     </div>
                     
                     <div class="mb-3">
                         <label class="text-muted d-block">Field of Study</label>
-                        <p class="mb-0">{{ user.userprofile.field_of_study }}</p>
+                        <p class="mb-0">{{ profile.field_of_study|default:"Not provided" }}</p>
                     </div>
                     
                     <div class="mb-0">
                         <label class="text-muted d-block">Skills</label>
                         <div class="skill-tags">
-                            {% for skill in user.userprofile.skills %}
-                            <span class="badge bg-primary me-2 mb-2">{{ skill }}</span>
-                            {% endfor %}
+                            {% if profile.skills %}
+                                {% for skill in profile.skills %}
+                                <span class="badge bg-primary me-2 mb-2">{{ skill }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted mb-0">No skills added yet</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -174,24 +178,25 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label class="form-label">First Name</label>
-                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name|default:'' }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Last Name</label>
-                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name|default:'' }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Education Level</label>
                         <select class="form-select" name="education_level">
-                            <option value="High School" {% if user.userprofile.education_level == "High School" %}selected{% endif %}>High School</option>
-                            <option value="Bachelor's" {% if user.userprofile.education_level == "Bachelor's" %}selected{% endif %}>Bachelor's Degree</option>
-                            <option value="Master's" {% if user.userprofile.education_level == "Master's" %}selected{% endif %}>Master's Degree</option>
-                            <option value="Doctorate" {% if user.userprofile.education_level == "Doctorate" %}selected{% endif %}>Doctorate</option>
+                            <option value="">Select Education Level</option>
+                            <option value="High School" {% if profile.education_level == "High School" %}selected{% endif %}>High School</option>
+                            <option value="Bachelor's" {% if profile.education_level == "Bachelor's" %}selected{% endif %}>Bachelor's Degree</option>
+                            <option value="Master's" {% if profile.education_level == "Master's" %}selected{% endif %}>Master's Degree</option>
+                            <option value="Doctorate" {% if profile.education_level == "Doctorate" %}selected{% endif %}>Doctorate</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Field of Study</label>
-                        <input type="text" class="form-control" name="field_of_study" value="{{ user.userprofile.field_of_study }}">
+                        <input type="text" class="form-control" name="field_of_study" value="{{ profile.field_of_study|default:'' }}" placeholder="e.g., Computer Science, Biology">
                     </div>
                 </form>
             </div>

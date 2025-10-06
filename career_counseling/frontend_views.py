@@ -31,9 +31,10 @@ def profile(request):
     profile_completion = (completed_fields / total_fields) * 100
     
     context = {
-        'user_responses': user_responses,
-        'career_recommendations': career_recommendations,
-        'profile_completion': profile_completion
+        'user_responses': user_responses[:5],  # Limit to 5 most recent
+        'career_recommendations': career_recommendations[:5],  # Limit to top 5
+        'profile_completion': int(profile_completion),
+        'profile': profile  # Add profile to context
     }
     return render(request, 'profile.html', context)
 
@@ -43,6 +44,9 @@ def assessment(request):
         try:
             data = json.loads(request.body)
             responses = data.get('responses', [])
+            
+            # Delete any existing responses for this user to avoid unique constraint errors
+            UserResponse.objects.filter(user=request.user).delete()
             
             # Save user responses
             for response_data in responses:
@@ -60,6 +64,8 @@ def assessment(request):
             generate_recommendations(request.user)
             
             return JsonResponse({'status': 'success', 'message': 'Assessment completed successfully'})
+        except Question.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Invalid question ID'}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
@@ -78,6 +84,9 @@ def generate_recommendations(user):
     
     # Get career paths
     career_paths = CareerPath.objects.all()
+    
+    # Delete old recommendations to avoid duplicates
+    CareerRecommendation.objects.filter(user=user).delete()
     
     # Generate recommendations based on analysis
     recommendations = []
@@ -223,22 +232,45 @@ def calculate_career_match(career_path, skill_analysis, interest_analysis, perso
     }
     
     # Calculate skill match
-    required_skills = set([skill.lower() for skills in career_path.required_skills.values() for skill in skills])
-    skill_match = sum(skill_analysis.get(skill, 0) for skill in required_skills) / (len(required_skills) * 100)
+    skill_match = 0
+    try:
+        if isinstance(career_path.required_skills, dict):
+            # Flatten all skills from the dict
+            all_skills = []
+            for skill_list in career_path.required_skills.values():
+                if isinstance(skill_list, list):
+                    all_skills.extend([s.lower() for s in skill_list])
+            
+            if all_skills:
+                # Match user skills against required skills
+                total_score = 0
+                for skill_key, skill_value in skill_analysis.items():
+                    skill_key_lower = skill_key.lower()
+                    for req_skill in all_skills:
+                        if skill_key_lower in req_skill or req_skill in skill_key_lower:
+                            total_score += skill_value
+                            break
+                skill_match = min(total_score / (len(all_skills) * 100), 1.0)
+    except (AttributeError, TypeError):
+        skill_match = 0.5  # Default to neutral if there's an error
     
     # Calculate interest match based on career title and description
     interest_match = 0
-    if "software" in career_path.title.lower() or "developer" in career_path.title.lower():
+    career_title_lower = career_path.title.lower()
+    if "software" in career_title_lower or "developer" in career_title_lower or "engineer" in career_title_lower:
         interest_match = interest_analysis.get("Technology", 0) / 100
-    elif "healthcare" in career_path.title.lower() or "medical" in career_path.title.lower():
+    elif "healthcare" in career_title_lower or "medical" in career_title_lower or "nurse" in career_title_lower:
         interest_match = interest_analysis.get("Healthcare", 0) / 100
-    elif "business" in career_path.title.lower() or "finance" in career_path.title.lower():
+    elif "business" in career_title_lower or "finance" in career_title_lower or "manager" in career_title_lower:
         interest_match = interest_analysis.get("Business", 0) / 100
-    elif "designer" in career_path.title.lower() or "creative" in career_path.title.lower():
+    elif "designer" in career_title_lower or "creative" in career_title_lower or "artist" in career_title_lower:
         interest_match = interest_analysis.get("Creative", 0) / 100
+    else:
+        # Default to average of all interests
+        interest_match = sum(interest_analysis.values()) / (len(interest_analysis) * 100) if interest_analysis else 0.5
     
     # Calculate personality match
-    personality_match = sum(personality_insights.values()) / (len(personality_insights) * 100)
+    personality_match = sum(personality_insights.values()) / (len(personality_insights) * 100) if personality_insights else 0.5
     
     # Calculate overall match score
     match_score = (
@@ -254,26 +286,34 @@ def generate_recommendation_reasoning(career_path, skill_analysis, interest_anal
     
     # Add skill-based reasons
     matching_skills = []
-    for skill_type, skills in career_path.required_skills.items():
-        for skill in skills:
-            if skill_analysis.get(skill, 0) >= 75:
-                matching_skills.append(skill)
+    try:
+        if isinstance(career_path.required_skills, dict):
+            for skill_type, skills in career_path.required_skills.items():
+                if isinstance(skills, list):
+                    for skill in skills:
+                        # Check if user has this skill with a high score
+                        for user_skill, score in skill_analysis.items():
+                            if score >= 75 and (skill.lower() in user_skill.lower() or user_skill.lower() in skill.lower()):
+                                matching_skills.append(skill)
+    except (AttributeError, TypeError):
+        pass
     
     if matching_skills:
-        reasons.append(f"You have strong skills in {', '.join(matching_skills)}, which are essential for this role.")
+        reasons.append(f"You have strong skills in {', '.join(matching_skills[:3])}, which are essential for this role.")
     
     # Add interest-based reasons
     career_interests = []
-    if "software" in career_path.title.lower() or "developer" in career_path.title.lower():
+    career_title_lower = career_path.title.lower()
+    if "software" in career_title_lower or "developer" in career_title_lower:
         if interest_analysis.get("Technology", 0) >= 75:
             career_interests.append("technology")
-    elif "healthcare" in career_path.title.lower():
+    elif "healthcare" in career_title_lower:
         if interest_analysis.get("Healthcare", 0) >= 75:
             career_interests.append("healthcare")
-    elif "business" in career_path.title.lower():
+    elif "business" in career_title_lower:
         if interest_analysis.get("Business", 0) >= 75:
             career_interests.append("business")
-    elif "designer" in career_path.title.lower():
+    elif "designer" in career_title_lower:
         if interest_analysis.get("Creative", 0) >= 75:
             career_interests.append("creative work")
     
@@ -283,13 +323,19 @@ def generate_recommendation_reasoning(career_path, skill_analysis, interest_anal
     # Add personality-based reasons
     strong_traits = [trait for trait, score in personality_insights.items() if score >= 75]
     if strong_traits:
-        reasons.append(f"Your {', '.join(strong_traits).lower()} traits would be valuable in this role.")
+        reasons.append(f"Your {', '.join(strong_traits[:2]).lower()} traits would be valuable in this role.")
     
     # Add education and outlook
-    reasons.append(f"With the required {career_path.education_requirements['minimum']}, you can enter this field.")
-    reasons.append(f"Career outlook: {career_path.job_outlook}")
+    try:
+        if isinstance(career_path.education_requirements, dict) and 'minimum' in career_path.education_requirements:
+            reasons.append(f"With the required {career_path.education_requirements['minimum']}, you can enter this field.")
+    except (AttributeError, TypeError, KeyError):
+        pass
     
-    return " ".join(reasons)
+    if career_path.job_outlook:
+        reasons.append(f"Career outlook: {career_path.job_outlook}")
+    
+    return " ".join(reasons) if reasons else "This career matches your profile based on your assessment responses."
 
 @login_required
 def recommendations(request):
