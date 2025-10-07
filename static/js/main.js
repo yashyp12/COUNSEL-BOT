@@ -1,5 +1,34 @@
 // Main JavaScript file for CounselBot
 
+// Get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Setup CSRF token for all AJAX requests
+$(document).ready(function() {
+    const csrftoken = getCookie('csrftoken');
+    
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+
 // Handle option selection in assessment
 function handleOptionSelection() {
     $('.option-item').on('click', function() {
@@ -9,37 +38,11 @@ function handleOptionSelection() {
 }
 
 // Submit assessment responses
+// Note: Assessment submission is handled in assessment.html template
+// This function is kept for compatibility but does nothing
 function submitAssessment() {
-    $('#assessment-form').on('submit', function(e) {
-        e.preventDefault();
-        
-        const responses = [];
-        $('.question-card').each(function() {
-            const questionId = $(this).data('question-id');
-            const selectedOption = $(this).find('.option-item.selected').data('value');
-            
-            if (selectedOption) {
-                responses.push({
-                    question: questionId,
-                    response_text: selectedOption
-                });
-            }
-        });
-
-        // Submit responses to API
-        $.ajax({
-            url: '/api/responses/',
-            method: 'POST',
-            data: JSON.stringify(responses),
-            contentType: 'application/json',
-            success: function(response) {
-                window.location.href = '/recommendations/';
-            },
-            error: function(xhr) {
-                showAlert('Error submitting responses. Please try again.', 'danger');
-            }
-        });
-    });
+    // Assessment form submission is handled in the assessment.html template
+    // to avoid conflicts and ensure proper data formatting
 }
 
 // Handle profile updates
@@ -47,17 +50,54 @@ function handleProfileUpdate() {
     $('#profile-form').on('submit', function(e) {
         e.preventDefault();
         
-        const formData = $(this).serialize();
+        // Get CSRF token
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+        
+        // Get user's profile ID first, then update
         $.ajax({
             url: '/api/profiles/',
-            method: 'PUT',
-            data: formData,
-            success: function(response) {
-                showAlert('Profile updated successfully!', 'success');
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            success: function(profiles) {
+                if (profiles && profiles.length > 0) {
+                    const profileId = profiles[0].id;
+                    
+                    // Now update the profile
+                    $.ajax({
+                        url: `/api/profiles/${profileId}/`,
+                        method: 'PUT',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify(data),
+                        success: function(response) {
+                            showAlert('Profile updated successfully!', 'success');
+                            // Reload page after short delay to show updated data
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+                        },
+                        error: function(xhr) {
+                            showAlert('Error updating profile. Please try again.', 'danger');
+                            console.error('Profile update error:', xhr.responseText);
+                        }
+                    });
+                } else {
+                    showAlert('Profile not found. Please try again.', 'danger');
+                }
             },
             error: function(xhr) {
-                showAlert('Error updating profile. Please try again.', 'danger');
+                showAlert('Error fetching profile. Please try again.', 'danger');
+                console.error('Profile fetch error:', xhr.responseText);
             }
         });
     });

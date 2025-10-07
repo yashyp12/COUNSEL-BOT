@@ -19,9 +19,10 @@
     <div class="row">
         <!-- Recommendations -->
         <div class="col-lg-8">
-            {% for recommendation in recommendations %}
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
+            {% if recommendations %}
+                {% for recommendation in recommendations %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <h3 class="card-title mb-0">{{ recommendation.career_path.title }}</h3>
                         <span class="badge bg-primary">{{ recommendation.confidence_score|floatformat:1 }}% Match</span>
@@ -33,27 +34,35 @@
                         <div class="col-md-6">
                             <h5>Required Skills</h5>
                             <ul class="list-unstyled">
-                                {% for skill in recommendation.career_path.required_skills.technical %}
-                                <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
-                                {% endfor %}
+                                {% if recommendation.career_path.required_skills.technical %}
+                                    {% for skill in recommendation.career_path.required_skills.technical %}
+                                    <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="text-muted">Not specified</li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="col-md-6">
                             <h5>Soft Skills</h5>
                             <ul class="list-unstyled">
-                                {% for skill in recommendation.career_path.required_skills.soft %}
-                                <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
-                                {% endfor %}
+                                {% if recommendation.career_path.required_skills.soft %}
+                                    {% for skill in recommendation.career_path.required_skills.soft %}
+                                    <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="text-muted">Not specified</li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <p><strong>Average Salary:</strong><br>{{ recommendation.career_path.average_salary }}</p>
+                            <p><strong>Average Salary:</strong><br>{{ recommendation.career_path.average_salary|default:"Not specified" }}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Education Required:</strong><br>{{ recommendation.career_path.education_requirements.minimum }}</p>
+                            <p><strong>Education Required:</strong><br>{{ recommendation.career_path.education_requirements.minimum|default:"Not specified" }}</p>
                         </div>
                     </div>
                     
@@ -69,6 +78,18 @@
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                    <h4>No recommendations available</h4>
+                    <p class="text-muted">Complete the assessment to get personalized career recommendations.</p>
+                    <a href="{% url 'assessment' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-clipboard-list me-2"></i>Take Assessment
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         </div>
         
         <!-- Analysis Sidebar -->
@@ -77,17 +98,21 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Skills Analysis</h4>
-                    {% for skill, level in skill_analysis.items %}
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>{{ skill }}</span>
-                            <span class="text-primary">{{ level }}%</span>
+                    {% if skill_analysis %}
+                        {% for skill, level in skill_analysis.items %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>{{ skill }}</span>
+                                <span class="text-primary">{{ level }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No skill data available</p>
+                    {% endif %}
                 </div>
             </div>
             
@@ -95,17 +120,21 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Interest Areas</h4>
-                    {% for interest, level in interest_analysis.items %}
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>{{ interest }}</span>
-                            <span class="text-primary">{{ level }}%</span>
+                    {% if interest_analysis %}
+                        {% for interest, level in interest_analysis.items %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>{{ interest }}</span>
+                                <span class="text-primary">{{ level }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No interest data available</p>
+                    {% endif %}
                 </div>
             </div>
             
@@ -113,17 +142,21 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Personality Insights</h4>
-                    {% for trait, value in personality_insights.items %}
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span>{{ trait }}</span>
-                            <span class="text-primary">{{ value }}%</span>
+                    {% if personality_insights %}
+                        {% for trait, value in personality_insights.items %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>{{ trait }}</span>
+                                <span class="text-primary">{{ value }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ value }}%"></div>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar" role="progressbar" style="width: {{ value }}%"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No personality data available</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
