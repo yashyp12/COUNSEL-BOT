@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 import json
 from django.template.loader import render_to_string
 import pdfkit
+import os
 
 def home(request):
     return render(request, 'home.html')
@@ -45,6 +46,28 @@ def assessment(request):
             data = json.loads(request.body)
             responses = data.get('responses', [])
             
+            # Validate that we have responses
+            if not responses:
+                return JsonResponse({
+                    'status': 'error', 
+                    'message': 'No responses provided. Please answer all questions.'
+                }, status=400)
+            
+            # Validate each response has required fields
+            for response_data in responses:
+                if 'question_id' not in response_data or 'response' not in response_data:
+                    return JsonResponse({
+                        'status': 'error', 
+                        'message': 'Invalid response format. Please try again.'
+                    }, status=400)
+                
+                # Validate question exists
+                if not Question.objects.filter(id=response_data.get('question_id')).exists():
+                    return JsonResponse({
+                        'status': 'error', 
+                        'message': f'Invalid question ID: {response_data.get("question_id")}'
+                    }, status=400)
+            
             # Delete any existing responses for this user to avoid unique constraint errors
             UserResponse.objects.filter(user=request.user).delete()
             
@@ -64,10 +87,25 @@ def assessment(request):
             generate_recommendations(request.user)
             
             return JsonResponse({'status': 'success', 'message': 'Assessment completed successfully'})
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'status': 'error', 
+                'message': 'Invalid data format. Please try again.'
+            }, status=400)
         except Question.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Invalid question ID'}, status=400)
+            return JsonResponse({
+                'status': 'error', 
+                'message': 'Invalid question ID'
+            }, status=400)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'Assessment submission error for user {request.user.id}: {str(e)}')
+            return JsonResponse({
+                'status': 'error', 
+                'message': 'An error occurred while processing your assessment. Please try again.'
+            }, status=500)
     
     # Get questions for assessment
     questions = Question.objects.all().order_by('?')[:10]
@@ -437,14 +475,29 @@ def download_report(request):
             'quiet': ''
         }
         
+        # Configure pdfkit with proper wkhtmltopdf path
+        config = None
+        try:
+            # Try to find wkhtmltopdf in common locations
+            import subprocess
+            wkhtmltopdf_path = subprocess.check_output(['which', 'wkhtmltopdf']).decode().strip()
+            config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+        except Exception:
+            # If which command fails, try default path
+            if os.path.exists('/usr/bin/wkhtmltopdf'):
+                config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        
         # Create PDF
-        pdf = pdfkit.from_string(html_string, False, options=options)
+        pdf = pdfkit.from_string(html_string, False, options=options, configuration=config)
         
         # Create response
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="career_assessment_report.pdf"'
         
         return response
+    except OSError as e:
+        messages.error(request, 'PDF generation failed: wkhtmltopdf is not installed or not accessible. Please contact administrator.')
+        return redirect('recommendations')
     except Exception as e:
-        messages.error(request, f'Error generating PDF report: {str(e)}. Please ensure wkhtmltopdf is installed.')
+        messages.error(request, f'Error generating PDF report: {str(e)}. Please try again or contact support.')
         return redirect('recommendations') 
