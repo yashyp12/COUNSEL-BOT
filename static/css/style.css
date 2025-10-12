@@ -252,18 +252,28 @@ main {
 
 /* Forms */
 .form-control {
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-primary);
+    color: #ffffff !important;
     padding: 0.8rem 1rem;
     border-radius: 8px;
 }
 
 .form-control:focus {
-    background-color: rgba(255,255,255,0.08);
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
-    color: var(--text-primary);
+    background-color: rgba(255,255,255,0.08) !important;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+    color: #ffffff !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.form-label {
+    color: #ffffff !important;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
 /* Animations */
@@ -684,14 +694,24 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Footer */
 .footer {
-    background-color: var(--secondary-dark) !important;
-    color: var(--text-secondary);
-    border-top: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    color: #ffffff !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: auto;
+    padding: 1.5rem 0;
 }
 
-.footer .text-muted {
-    color: var(--text-secondary) !important;
+.footer .text-muted,
+.footer span,
+.footer p,
+.footer a {
+    color: #ffffff !important;
+    opacity: 0.9;
+}
+
+.footer a:hover {
+    color: var(--accent-color) !important;
+    opacity: 1;
 }
 
 /* Badges */

@@ -33,15 +33,15 @@
                         </div>
                     {% endif %}
 
-                    <form method="post" class="mb-4">
+                    <form method="post" class="mb-4 text-white"></form>
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <label for="username" class="form-label text-white">Username</label>
+                            <input type="text" class="form-control bg-transparent text-white border-light" id="username" name="username" required style="color:#fff;">
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <label for="password" class="form-label text-white">Password</label>
+                            <input type="password" class="form-control bg-transparent text-white border-light" id="password" name="password" required style="color:#fff;">
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">
@@ -51,7 +51,7 @@
                     </form>
 
                     <div class="text-center mb-4">
-                        <span class="text-muted">OR</span>
+                        <span class="text-white">OR</span>
                     </div>
 
                     <div class="d-grid">

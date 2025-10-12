@@ -13,44 +13,45 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="first_name" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            <label for="first_name" class="form-label text-white">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required style="color: white;">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="last_name" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            <label for="last_name" class="form-label text-white">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required style="color: white;">
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <label for="email" class="form-label text-white">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required style="color: white;">
                     </div>
                     
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+                        <label for="username" class="form-label text-white">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required style="color: white;">
                     </div>
                     
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <label for="password" class="form-label text-white">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required style="color: white;">
                         <div class="form-text">
                             Password must be at least 8 characters long and contain letters, numbers, and special characters.
                         </div>
                     </div>
                     
                     <div class="mb-4">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <label for="confirm_password" class="form-label text-white">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required style="color: white;">
                     </div>
                     
                     <div class="mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="terms" required>
-                            <label class="form-check-label" for="terms">
-                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                        <div class="form-check d-flex align-items-center gap-2">
+                            <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                            <label class="form-check-label mb-0" for="terms" style="color: white;">
+                                I agree to the
                             </label>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" style="color: #007bff;">Terms and Conditions</a>
                         </div>
                     </div>
                     
@@ -69,30 +70,63 @@
 
 <!-- Terms and Conditions Modal -->
 <div class="modal fade" id="termsModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content terms-modal">
             <div class="modal-header">
-                <h5 class="modal-title">Terms and Conditions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-scroll me-2 text-primary"></i>
+                    <h5 class="modal-title">Terms and Conditions</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <h6>1. Introduction</h6>
-                <p>Welcome to CounselBot. By using our service, you agree to these terms.</p>
+            <div class="modal-body custom-scrollbar">
+                <div class="terms-section">
+                    <div class="section-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <h6>1. Introduction</h6>
+                    <p>Welcome to CounselBot. By using our service, you agree to these terms.</p>
+                </div>
                 
-                <h6>2. Privacy</h6>
-                <p>We respect your privacy and protect your personal information. See our Privacy Policy for details.</p>
+                <div class="terms-section">
+                    <div class="section-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h6>2. Privacy</h6>
+                    <p>We respect your privacy and protect your personal information. See our Privacy Policy for details.</p>
+                </div>
                 
-                <h6>3. User Accounts</h6>
-                <p>You are responsible for maintaining the security of your account and password.</p>
+                <div class="terms-section">
+                    <div class="section-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h6>3. User Accounts</h6>
+                    <p>You are responsible for maintaining the security of your account and password.</p>
+                </div>
                 
-                <h6>4. Service Usage</h6>
-                <p>Our career counseling service uses AI to provide recommendations based on your inputs.</p>
+                <div class="terms-section">
+                    <div class="section-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h6>4. Service Usage</h6>
+                    <p>Our career counseling service uses AI to provide recommendations based on your inputs.</p>
+                </div>
                 
-                <h6>5. Limitations</h6>
-                <p>Recommendations are for guidance only and should not be considered as professional advice.</p>
+                <div class="terms-section">
+                    <div class="section-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h6>5. Limitations</h6>
+                    <p>Recommendations are for guidance only and should not be considered as professional advice.</p>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+                <button type="button" class="btn btn-primary" onclick="$('#terms').prop('checked', true); $('#termsModal').modal('hide');">
+                    <i class="fas fa-check me-2"></i>I Agree
+                </button>
             </div>
         </div>
     </div>
@@ -101,44 +135,133 @@
 
 {% block extra_css %}
 <style>
+/* Form Checkbox Styling */
 .form-check-input {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    width: 1.2em;
+    height: 1.2em;
 }
 
 .form-check-input:checked {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
-[data-theme="light"] .form-check-input {
-    background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.modal-content {
-    background-color: var(--card-bg);
-    color: var(--text-primary);
+/* Terms Modal Styling */
+.terms-modal {
+    background-color: #111111 !important;
+    color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
-.modal-header,
-.modal-footer {
-    border-color: rgba(255, 255, 255, 0.1);
+.terms-modal .modal-header {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
 }
 
-[data-theme="light"] .modal-content {
-    background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+.terms-modal .modal-title {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
-[data-theme="light"] .modal-header,
-[data-theme="light"] .modal-footer {
-    border-color: rgba(0, 0, 0, 0.1);
+.terms-modal .modal-body {
+    background-color: #111111;
+    padding: 2rem;
 }
 
+.terms-modal .modal-footer {
+    background-color: #1a1a1a;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+}
+
+/* Terms Sections */
+.terms-section {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.terms-section:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.terms-section .section-icon {
+    color: #007bff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.terms-section h6 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.terms-section p {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Modal Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal Buttons */
+.terms-modal .btn-outline-light {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.terms-modal .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.terms-modal .btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.terms-modal .btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+/* Form Text */
 .form-text {
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
 }
 </style>
 {% endblock %}
