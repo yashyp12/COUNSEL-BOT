@@ -11,22 +11,22 @@
                     <h2 class="card-title mb-4">Assessment Response Details</h2>
                     
                     <div class="mb-4">
-                        <h5 class="text-muted">Question Type</h5>
-                        <p class="h4">{{ response.question.question_type }}</p>
+                        <h5 class="text-white    ">Question Type</h5>
+                        <p class="h4 text-white">{{ response.question.question_type }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <h5 class="text-muted">Question</h5>
+                        <h5 class="text-white ">Question</h5>
                         <p>{{ response.question.question_text }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <h5 class="text-muted">Your Response</h5>
+                        <h5 class="text-white">Your Response</h5>
                         <p>{{ response.response_text }}</p>
                     </div>
                     
                     <div class="mb-4">
-                        <h5 class="text-muted">Date Completed</h5>
+                        <h5 class="text-white">Date Completed</h5>
                         <p>{{ response.created_at|date:"F j, Y, g:i a" }}</p>
                     </div>
                     
