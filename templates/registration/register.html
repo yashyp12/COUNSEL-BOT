@@ -297,10 +297,21 @@
 
 {% block extra_js %}
 <script>
+    // Helper function to escape HTML special characters
+    function escapeHtml(unsafe) {
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/`/g, "&#96;");
+    }
+
     function showAlert(message, type) {
         const alertHtml = `
             <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
+                ${escapeHtml(message)}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         `;
