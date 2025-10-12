@@ -245,12 +245,12 @@
 {% block extra_css %}
 <style>
 .profile-header {
-    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
 }
 
 .stat-card {
-    background-color: rgba(108, 99, 255, 0.1) !important;
-    border: 1px solid rgba(108, 99, 255, 0.2);
+    background-color: var(--hover-bg) !important;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
@@ -264,18 +264,18 @@
 }
 
 .assessment-item:hover, .recommendation-item:hover {
-    background-color: rgba(108, 99, 255, 0.05);
+    background-color: var(--hover-bg);
 }
 
 .list-group-item {
     background-color: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
 }
 
 .list-group-item:hover {
-    background-color: rgba(108, 99, 255, 0.1);
+    background-color: var(--hover-bg);
 }
 
 .modal-content {
@@ -301,12 +301,12 @@
 .form-select:focus {
     background-color: rgba(255, 255, 255, 0.08);
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
 }
 
 [data-theme="light"] .stat-card {
-    background-color: rgba(108, 99, 255, 0.05) !important;
-    border: 1px solid rgba(108, 99, 255, 0.15);
+    background-color: var(--hover-bg) !important;
+    border: 1px solid var(--border-color);
 }
 
 [data-theme="light"] .list-group-item {
@@ -314,7 +314,7 @@
 }
 
 [data-theme="light"] .list-group-item:hover {
-    background-color: rgba(108, 99, 255, 0.05);
+    background-color: var(--hover-bg);
 }
 
 [data-theme="light"] .modal-content {
