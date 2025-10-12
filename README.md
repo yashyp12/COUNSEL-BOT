@@ -54,7 +54,6 @@ Python 3.11.9
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
- venv/Scripts/activate    
 ```
 
 3. Install dependencies:
