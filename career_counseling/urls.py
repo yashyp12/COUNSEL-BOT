@@ -18,3 +18,5 @@ urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('recommendations/', CareerRecommendationView.as_view(), name='career-recommendations'),
 ] 
+
+
