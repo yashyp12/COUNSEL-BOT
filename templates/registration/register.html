@@ -297,29 +297,106 @@
 
 {% block extra_js %}
 <script>
+    // Helper function to escape HTML special characters
+    function escapeHtml(unsafe) {
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+            .replace(/`/g, "&#96;");
+    }
+
+    function showAlert(message, type) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                ${escapeHtml(message)}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        
+        const container = document.querySelector('.card-body');
+        const existingAlert = container.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        container.insertAdjacentHTML('afterbegin', alertHtml);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(function() {
+            const alert = container.querySelector('.alert');
+            if (alert) {
+                alert.remove();
+            }
+        }, 5000);
+    }
+
     $(document).ready(function() {
         $('#registration-form').on('submit', function(e) {
             e.preventDefault();
             
-            if ($('#password').val() !== $('#confirm_password').val()) {
+            const password = $('#password').val();
+            const confirmPassword = $('#confirm_password').val();
+            
+            if (password !== confirmPassword) {
                 showAlert('Passwords do not match!', 'danger');
                 return;
             }
             
+            // Collect form data as JSON
+            const formData = {
+                first_name: $('#first_name').val(),
+                last_name: $('#last_name').val(),
+                email: $('#email').val(),
+                username: $('#username').val(),
+                password: password,
+                confirm_password: confirmPassword
+            };
+            
+            // Disable submit button to prevent double submission
+            const submitBtn = $(this).find('button[type="submit"]');
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...');
+            
             $.ajax({
                 url: '/api/register/',
                 method: 'POST',
-                data: $(this).serialize(),
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
                 success: function(response) {
-                    window.location.href = '/login/?registered=true';
+                    showAlert('Registration successful! Redirecting to login...', 'success');
+                    setTimeout(function() {
+                        window.location.href = '/login/?registered=true';
+                    }, 1500);
                 },
                 error: function(xhr) {
                     const errors = xhr.responseJSON;
                     let errorMessage = 'Registration failed. Please check your inputs.';
+                    
                     if (errors) {
-                        errorMessage = Object.values(errors).join('<br>');
+                        // Handle different error formats
+                        if (typeof errors === 'object') {
+                            const errorMessages = [];
+                            for (const [field, messages] of Object.entries(errors)) {
+                                if (Array.isArray(messages)) {
+                                    errorMessages.push(...messages);
+                                } else if (typeof messages === 'string') {
+                                    errorMessages.push(messages);
+                                } else {
+                                    errorMessages.push(JSON.stringify(messages));
+                                }
+                            }
+                            if (errorMessages.length > 0) {
+                                errorMessage = errorMessages.join('<br>');
+                            }
+                        } else if (typeof errors === 'string') {
+                            errorMessage = errors;
+                        }
                     }
+                    
                     showAlert(errorMessage, 'danger');
+                    submitBtn.prop('disabled', false).html('Create Account');
                 }
             });
         });
