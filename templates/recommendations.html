@@ -81,9 +81,9 @@
             {% else %}
             <div class="card mb-4 shadow-sm">
                 <div class="card-body text-center py-5">
-                    <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                    <i class="fas fa-info-circle fa-3x   mb-3"></i>
                     <h4>No recommendations available</h4>
-                    <p class="text-muted">Complete the assessment to get personalized career recommendations.</p>
+                    <p class="">Complete the assessment to get personalized career recommendations.</p>
                     <a href="{% url 'assessment' %}" class="btn btn-primary mt-3">
                         <i class="fas fa-clipboard-list me-2"></i>Take Assessment
                     </a>
@@ -106,13 +106,13 @@
                                 <span class="text-primary">{{ level }}%</span>
                             </div>
                             <div class="progress" style="height: 8px;">
-                                <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                                <div class="progress-bar" role="progressbar" data-width="{{ level }}" style="width: 0%"></div>
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center">No skill data available</p>
-                    {% endif %}
+                        <p class="  text-center">No skill data available</p>
+                    {% endif %} 
                 </div>
             </div>
             
@@ -128,12 +128,12 @@
                                 <span class="text-primary">{{ level }}%</span>
                             </div>
                             <div class="progress" style="height: 8px;">
-                                <div class="progress-bar" role="progressbar" style="width: {{ level }}%"></div>
+                                <div class="progress-bar" role="progressbar" data-width="{{ level }}" style="width: 0%"></div>
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center">No interest data available</p>
+                        <p class="  text-center">No interest data available</p>
                     {% endif %}
                 </div>
             </div>
@@ -150,12 +150,12 @@
                                 <span class="text-primary">{{ value }}%</span>
                             </div>
                             <div class="progress" style="height: 8px;">
-                                <div class="progress-bar" role="progressbar" style="width: {{ value }}%"></div>
+                                <div class="progress-bar" role="progressbar" data-width="{{ value }}" style="width: 0%"></div>
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
-                        <p class="text-muted text-center">No personality data available</p>
+                        <p class=" text-center">No personality data available</p>
                     {% endif %}
                 </div>
             </div>
@@ -166,6 +166,8 @@
 
 {% block extra_css %}
 <style>
+
+  
 .progress {
     background-color: rgba(59, 130, 246, 0.1);
     border-radius: 8px;
@@ -233,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Animate progress bars on load
     const progressBars = document.querySelectorAll('.progress-bar');
     progressBars.forEach(bar => {
-        const width = bar.style.width;
+        const width = bar.dataset.width + '%';
         bar.style.width = '0%';
         setTimeout(() => {
             bar.style.width = width;

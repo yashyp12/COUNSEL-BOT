@@ -38,6 +38,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .ml.career_predictor import CareerPredictor
 
+
+
 # Download required NLTK data
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -247,3 +249,20 @@ def assessment_results(request):
         'result': result,
         'career_details': career_details
     }) 
+
+
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile  # or get_or_create
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('profile_view')  # change to your profile page name
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, "profile/update.html", {"form": form})

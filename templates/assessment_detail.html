@@ -3,41 +3,283 @@
 {% block title %}Assessment Details - CounselBot{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title mb-4">Assessment Response Details</h2>
-                    
-                    <div class="mb-4">
-                        <h5 class="text-white    ">Question Type</h5>
-                        <p class="h4 text-white">{{ response.question.question_type }}</p>
+        <div class="col-12 col-lg-10 col-xl-8">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'profile' %}" class="text-decoration-none">Profile</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'recommendations' %}" class="text-decoration-none">Assessments</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Details</li>
+                        </ol>
+                    </nav>
+                    <h1 class="h2 mb-0 text-gradient">Assessment Response</h1>
+                    <p class="text-muted">Detailed view of your assessment response</p>
+                </div>
+                <a href="{% url 'recommendations' %}" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Results
+                </a>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="card border-0 shadow-lg glass-morphism">
+                <div class="card-header bg-dark bg-opacity-25 border-bottom border-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0 text-white">
+                            <i class="fas fa-clipboard-check me-2 text-primary"></i>Response Details
+                        </h3>
+                        <span class="badge bg-primary fs-6">{{ response.question.question_type|title }}</span>
                     </div>
-                    
-                    <div class="mb-4">
-                        <h5 class="text-white ">Question</h5>
-                        <p>{{ response.question.question_text }}</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <!-- Question Information -->
+                        <div class="col-12">
+                            <div class="card bg-dark bg-opacity-50 border-secondary">
+                                <div class="card-header border-bottom border-secondary">
+                                    <h5 class="mb-0 text-white">
+                                        <i class="fas fa-question-circle me-2 text-info"></i>Question
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5 text-light mb-0">{{ response.question.question_text }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Response -->
+                        <div class="col-12 col-md-6">
+                            <div class="card bg-dark bg-opacity-50 border-secondary h-100">
+                                <div class="card-header border-bottom border-secondary">
+                                    <h5 class="mb-0 text-white">
+                                        <i class="fas fa-user-edit me-2 text-success"></i>Your Response
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="p-3 bg-dark bg-opacity-25 rounded border border-secondary">
+                                        <p class="fs-6 text-light mb-0">{{ response.response_text }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assessment Meta -->
+                        <div class="col-12 col-md-6">
+                            <div class="card bg-dark bg-opacity-50 border-secondary h-100">
+                                <div class="card-header border-bottom border-secondary">
+                                    <h5 class="mb-0 text-white">
+                                        <i class="fas fa-calendar-alt me-2 text-warning"></i>Assessment Info
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-column gap-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-clock text-muted me-3 fs-5"></i>
+                                            <div>
+                                                <small class="text-muted">Date Completed</small>
+                                                <div class="text-white">{{ response.created_at|date:"F j, Y" }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-clock text-muted me-3 fs-5"></i>
+                                            <div>
+                                                <small class="text-muted">Time</small>
+                                                <div class="text-white">{{ response.created_at|date:"g:i A" }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tag text-muted me-3 fs-5"></i>
+                                            <div>
+                                                <small class="text-muted">Question Type</small>
+                                                <div class="text-white">{{ response.question.question_type|title }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Career Recommendations -->
+                        {% if recommendations %}
+                        <div class="col-12">
+                            <div class="card bg-dark bg-opacity-50 border-secondary">
+                                <div class="card-header border-bottom border-secondary">
+                                    <h5 class="mb-0 text-white">
+                                        <i class="fas fa-chart-line me-2 text-primary"></i>Related Career Matches
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        {% for recommendation in recommendations|slice:":3" %}
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="card bg-dark border-secondary h-100 career-card hover-lift">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <h6 class="card-title text-white mb-0">{{ recommendation.career_path.title }}</h6>
+                                                        <span class="badge bg-primary fs-7">
+                                                            {{ recommendation.confidence_score|floatformat:0 }}% Match
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-muted small mb-3">
+                                                        {{ recommendation.reasoning|truncatewords:15 }}
+                                                    </p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">Confidence Score</small>
+                                                        <div class="progress flex-grow-1 mx-2" style="height: 6px;">
+                                                            <div class="progress-bar bg-success" 
+                                                                 style="width: '{{ recommendation.confidence_score }}%'">
+                                                            </div>
+                                                        </div>
+                                                        <small class="text-muted">{{ recommendation.confidence_score|floatformat:0 }}%</small>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer border-top border-secondary bg-dark bg-opacity-25">
+                                                    <a href="{% url 'career_detail' recommendation.career_path.id %}" 
+                                                       class="btn btn-sm btn-outline-primary w-100">
+                                                        <i class="fas fa-search me-1"></i>Explore Career
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
-                    
-                    <div class="mb-4">
-                        <h5 class="text-white">Your Response</h5>
-                        <p>{{ response.response_text }}</p>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                                <a href="{% url 'recommendations' %}" class="btn btn-primary btn-lg px-4">
+                                    <i class="fas fa-chart-bar me-2"></i>View All Recommendations
+                                </a>
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-lg px-4">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Back to Dashboard
+                                </a>
+                                <button onclick="window.print()" class="btn btn-outline-info btn-lg px-4">
+                                    <i class="fas fa-print me-2"></i>Print Details
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="mb-4">
-                        <h5 class="text-white">Date Completed</h5>
-                        <p>{{ response.created_at|date:"F j, Y, g:i a" }}</p>
+                </div>
+            </div>
+
+            <!-- Additional Info Section -->
+            <div class="row mt-4">
+                <div class="col-12 col-md-6">
+                    <div class="card border-0 shadow-sm bg-dark bg-opacity-25">
+                        <div class="card-body text-center">
+                            <i class="fas fa-brain fa-2x text-info mb-3"></i>
+                            <h5 class="text-white">AI-Powered Analysis</h5>
+                            <p class="text-muted small mb-0">
+                                Your responses are analyzed using machine learning to provide personalized career recommendations.
+                            </p>
+                        </div>
                     </div>
-                    
-                    <div class="text-center mt-4">
-                        <a href="{% url 'recommendations' %}" class="btn btn-primary">
-                            View All Recommendations
-                        </a>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card border-0 shadow-sm bg-dark bg-opacity-25">
+                        <div class="card-body text-center">
+                            <i class="fas fa-sync-alt fa-2x text-success mb-3"></i>
+                            <h5 class="text-white">Continuous Learning</h5>
+                            <p class="text-muted small mb-0">
+                                Our system continuously improves its recommendations based on new data and feedback.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+
+<style>
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.career-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.career-card:hover {
+    transform: translateY(-5px);
+    border-color: #667eea;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.border-secondary {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.progress {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: #667eea;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.badge {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.fs-7 {
+    font-size: 0.8rem;
+}
+</style>
+{% endblock %}
